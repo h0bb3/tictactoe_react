@@ -24,12 +24,14 @@ class Zquare extends React.Component {
 class Board extends React.Component {
   constructor(props) {
     super(props)
-    this.size = 3 // decides the side size of of the game board, should be an odd number
+    this.size = 0 // decides the side 0 -> 3x3 etc
+    this.sizes = [[3, '3x3'], [5, '5x5'], [7, '7x7'], [9, '9x9']]
+
     this.state = this.getInitialState()
   }
-  renderSquare(i, winner) {
+  renderSquare(i, doNada) {
     return <Zquare value={this.state.game.getSquare(i)}
-             onClick={()=> winner ? this.doNada() : this.handleClick(i)}
+             onClick={()=> doNada ? this.doNada() : this.handleClick(i)}
              key={i}/>
   }
 
@@ -38,8 +40,9 @@ class Board extends React.Component {
   }
   
   handleClick(i) {
-    this.state.game.setSquare(i)
-    this.setState({game: this.state.game})
+    if (this.state.game.setSquare(i)) {
+      this.setState({game: this.state.game})
+    }
   }
   
   renderRow(start, length, winner) {
@@ -52,11 +55,21 @@ class Board extends React.Component {
   }
 
   getInitialState() {
-    return {game: new TicTacToe()}
+    return {game: new TicTacToe(this.sizes[this.size][0])}
   }
 
   reset() {
     this.setState(this.getInitialState())
+  }
+
+  setSize(size) {
+    for (let i = 0; i < this.sizes.length; i++) {
+      if (size === this.sizes[i][1]) {
+        this.size = i
+      }
+    }
+
+    this.setState({game: this.state.game})  // force a render
   }
 
   render() {
@@ -76,7 +89,12 @@ class Board extends React.Component {
             <button onClick={() => this.reset()}>
               Reset game
             </button>
+            <select name="game_size" value={this.sizes[this.size][1]} onChange={event => this.setSize(event.target.value)}>
+              {this.sizes.map(opt => {return(<option id="{opt[0]}" key={opt[0]}>{opt[1]}</option>)})}
+            </select>
           </div>
+
+          
       </div>
     )
   }

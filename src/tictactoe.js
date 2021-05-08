@@ -1,7 +1,10 @@
 export class TicTacToe {
 
-  constructor() {
-    this._size = 3
+  constructor(size) {
+    if (size < 3 || size % 2 !== 1) {
+      throw new TypeError(`The argument size: '${size}' is not valid for tic tac toe (3, 5, 7, ...)`) 
+    }
+    this._size = size
     this.reset()
   }
 
@@ -71,16 +74,36 @@ export class TicTacToe {
     return this.squares[ix]
   }
 
+  countPlayerSymbols(symbol) {
+    return this.squares.reduce((count, sym) => sym === symbol ? count + 1 : count, 0)
+  }
+
   setSquare(ix) {
     const squares = this.squares
     const turn = this.turn
-    if (squares[ix] === null) {
+    const allTokensUsed = this.countPlayerSymbols(this.getTurnSymbol()) >= this.size
+    const symbol = squares[ix]
+
+    if (symbol === null) {
+
+      // do not allow to place in the middle as the first move
       if (turn === 0 && ix === Math.floor(this.size * this.size / 2)) {
-        return
+        return false
       }
-      squares[ix] = this.getTurnSymbol(turn)
+
+      if (allTokensUsed) {
+        return false
+      }
+
+      squares[ix] = this.getTurnSymbol()
       this._turn++
+      return true
+    } else if (allTokensUsed && symbol === this.getTurnSymbol()) {
+      squares[ix] = null
+      return true
     }
+
+    return false
   }
   
 }
