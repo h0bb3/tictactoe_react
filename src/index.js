@@ -23,10 +23,10 @@ class Zquare extends React.Component {
 class Board extends React.Component {
   constructor(props) {
     super(props)
-    const size = 3
+    this.size = 3 // decides the side size of of the game board
     this.state = {
       turn: 0,
-      squares: Array(size * size).fill(null)
+      squares: Array(this.size * this.size).fill(null)
     }
   }
   renderSquare(i) {
@@ -62,13 +62,12 @@ class Board extends React.Component {
 
   render() {
     const turn = this.state.turn
-    const status = 'Next player: ' + this.getTurnSymbol(turn)
-    const size = Math.floor(Math.sqrt(this.state.squares.length))
-    const range = [...Array(size).keys()]
+    const status = 'Next Player: ' + this.getTurnSymbol(turn)
+    const range = [...Array(this.size).keys()]
     return (
       <div>
         <div className="status">{status}</div>
-          { range.map((i) => this.renderRow(i * size, size)) }
+          { range.map((i) => this.renderRow(i * this.size, this.size)) }
       </div>
     );
   }
