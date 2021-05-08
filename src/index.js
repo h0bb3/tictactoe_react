@@ -23,7 +23,7 @@ class Zquare extends React.Component {
 class Board extends React.Component {
   constructor(props) {
     super(props)
-    this.size = 3 // decides the side size of of the game board
+    this.size = 5 // decides the side size of of the game board, should be an odd number
     this.state = {
       turn: 0,
       squares: Array(this.size * this.size).fill(null)
@@ -62,7 +62,11 @@ class Board extends React.Component {
 
   render() {
     const turn = this.state.turn
-    const status = 'Next Player: ' + this.getTurnSymbol(turn)
+    let status = 'Next Player: ' + this.getTurnSymbol(turn)
+    const winner = this.checkWinner()
+    if (winner) {
+      status = 'Winner is: ' +  winner
+    }
     const range = [...Array(this.size).keys()]
     return (
       <div>
@@ -70,6 +74,51 @@ class Board extends React.Component {
           { range.map((i) => this.renderRow(i * this.size, this.size)) }
       </div>
     );
+  }
+
+  checkSegment(startIx, stride, length) {
+    const squares = this.state.squares
+    const symbol = squares[startIx]
+      
+    if (symbol !== null) {
+      let found = true
+      startIx += stride
+      for (let cIx = 1; cIx < length; cIx++, startIx += stride) {
+        if (symbol !== squares[startIx]) {
+          found = false
+          break
+        }
+      }
+
+      if (found) {
+        return symbol
+      }
+    }
+
+    return false
+  }
+
+  checkWinner() {
+    const size = this.size
+
+    // checks array with start and stride parameters
+    let checks = [[0, size + 1], [size - 1, size - 1]]  // the diagonal checks
+
+    // add all rows and col checks
+    for (let ix = 0; ix < size; ix++) {
+      checks.push([ix * size, 1])
+      checks.push([ix, size])
+    }
+
+    // perform the checks
+    for (let cIx = 0; cIx < checks.length; cIx++) {
+      const symbol = this.checkSegment(checks[cIx][0], checks[cIx][1], size)
+      if (symbol) {
+        return symbol
+      }
+    }
+
+    return false
   }
 }
 
