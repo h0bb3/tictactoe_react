@@ -24,10 +24,7 @@ class Board extends React.Component {
   constructor(props) {
     super(props)
     this.size = 5 // decides the side size of of the game board, should be an odd number
-    this.state = {
-      turn: 0,
-      squares: Array(this.size * this.size).fill(null)
-    }
+    this.state = this.getZeroState()
   }
   renderSquare(i) {
     return <Zquare value={this.state.squares[i]}
@@ -60,6 +57,17 @@ class Board extends React.Component {
     )
   }
 
+  getZeroState() {
+    return {
+      turn: 0,
+      squares: Array(this.size * this.size).fill(null)
+    }
+  }
+
+  reset() {
+    this.setState(this.getZeroState())
+  }
+
   render() {
     const turn = this.state.turn
     let status = 'Next Player: ' + this.getTurnSymbol(turn)
@@ -72,8 +80,14 @@ class Board extends React.Component {
       <div>
         <div className="status">{status}</div>
           { range.map((i) => this.renderRow(i * this.size, this.size)) }
+
+          <div className="controls">
+            <button onClick={() => this.reset()}>
+              Reset game
+            </button>
+          </div>
       </div>
-    );
+    )
   }
 
   checkSegment(startIx, stride, length) {
