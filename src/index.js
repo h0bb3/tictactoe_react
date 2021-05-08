@@ -56,7 +56,7 @@ class Board extends React.Component {
   }
 
   reset() {
-    this.setState(this.getZeroState())
+    this.setState(this.getInitialState())
   }
 
   render() {
