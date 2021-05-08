@@ -23,36 +23,40 @@ class Zquare extends React.Component {
 class Board extends React.Component {
   constructor(props) {
     super(props)
-    this.size = 5 // decides the side size of of the game board, should be an odd number
+    this.size = 3 // decides the side size of of the game board, should be an odd number
     this.state = this.getZeroState()
   }
-  renderSquare(i) {
+  renderSquare(i, winner) {
     return <Zquare value={this.state.squares[i]}
-             onClick={()=>this.handleClick(i)}
+             onClick={()=> winner ? this.doNada() : this.handleClick(i)}
              key={i}/>
   }
 
   getTurnSymbol(turn) {
     return turn % 2 === 0 ? 'X' : 'O'
   }
+
+  doNada() {
+
+  }
   
   handleClick(i) {
     const squares = this.state.squares.slice();
     const turn = this.state.turn
     if (squares[i] === null) {
+      if (turn === 0 && i === Math.floor(this.size * this.size / 2)) {
+        return
+      }
       squares[i] = this.getTurnSymbol(turn)
       this.setState({squares: squares, turn: turn + 1})
-    } else {
-      squares[i] = null
-      this.setState({squares: squares, turn: turn})
     }
   }
   
-  renderRow(start, length) {
+  renderRow(start, length, winner) {
     const range = [...Array(length).keys()]
     return (
        <div className="board-row" key={start}>
-         { range.map((i) => this.renderSquare(start + i))}
+         { range.map((i) => this.renderSquare(start + i, winner))}
        </div>
     )
   }
@@ -79,7 +83,7 @@ class Board extends React.Component {
     return (
       <div>
         <div className="status">{status}</div>
-          { range.map((i) => this.renderRow(i * this.size, this.size)) }
+          { range.map((i) => this.renderRow(i * this.size, this.size, winner)) }
 
           <div className="controls">
             <button onClick={() => this.reset()}>
