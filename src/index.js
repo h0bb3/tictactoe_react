@@ -26,11 +26,14 @@ class Board extends React.Component {
     super(props)
     this.size = 0 // decides the side 0 -> 3x3 etc
     this.sizes = [[3, '3x3'], [5, '5x5'], [7, '7x7'], [9, '9x9']]
-
+    
     this.state = this.getInitialState()
+
+    this.aiPlayerSymbol = this.state.game.getTurnSymbol(1)
+
   }
   renderSquare(i, doNada) {
-    return <Zquare value={this.state.game.getSquare(i)}
+    return <Zquare value={this.state.game.getSquareSymbol(i)}
              onClick={()=> doNada ? this.doNada() : this.handleClick(i)}
              key={i}/>
   }
@@ -52,16 +55,23 @@ class Board extends React.Component {
       
       this.setState(this.constructState(this.state.game))
 
-      const game = this.state.game
-      const thisObject = this
-      setTimeout( function () {
-      // now we do the "ai" move
-        while (thisObject.isPlayerTurn(game, 'O')) {
-          while (!game.setSquare(Math.floor(Math.random() * game.size * game.size)));
-        }
-        thisObject.setState(thisObject.constructState(thisObject.state.game))
-      }, 2000)
-
+      if (!this.state.game.checkWinner() && this.isPlayerTurn(this.state.game, this.aiPlayerSymbol)) {
+        const game = this.state.game
+        const thisObject = this
+        setTimeout( function () {
+          // now we do the "ai" move
+          const validMoves = game.getValidMoves()
+          let validMove
+          do {
+            validMove = validMoves[Math.floor(Math.random() * validMoves.length)]
+          } while (validMove[0] === validMove[1]) // we discard movement from and to the same square
+          game.setSquare(validMove[0])
+          if (validMove.length > 1) {
+            game.setSquare(validMove[1])
+          }
+          thisObject.setState(thisObject.constructState(thisObject.state.game))
+        }, 2000)
+      }
     }
   }
   
@@ -103,7 +113,7 @@ class Board extends React.Component {
     return (
       <div>
         <div className="status">{status}</div>
-          { range.map((i) => this.renderRow(i * size, size, winner || this.isPlayerTurn(this.state.game, 'O'))) }
+          { range.map((i) => this.renderRow(i * size, size, winner || this.isPlayerTurn(this.state.game, this.aiPlayerSymbol))) }
 
           <div className="controls">
             <button onClick={() => this.reset()}>

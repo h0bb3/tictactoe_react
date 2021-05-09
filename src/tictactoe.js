@@ -1,4 +1,7 @@
 export class TicTacToe {
+  #_size
+  #_turn
+  #squares
 
   constructor(size) {
     if (size < 3 || size % 2 !== 1) {
@@ -66,11 +69,11 @@ export class TicTacToe {
     return this._turn
   }
 
-  getTurnSymbol() {
-    return this.turn % 2 === 0 ? 'X' : 'O'
+  getTurnSymbol(turn = this.turn) {
+    return turn % 2 === 0 ? 'X' : 'O'
   }
 
-  getSquare(ix) {
+  getSquareSymbol(ix) {
     return this.squares[ix]
   }
 
@@ -78,31 +81,60 @@ export class TicTacToe {
     return this.squares.reduce((count, sym) => sym === symbol ? count + 1 : count, 0)
   }
 
-  setSquare(ix) {
-    const squares = this.squares
-    const turn = this.turn
-    const allTokensUsed = this.countPlayerSymbols(this.getTurnSymbol()) >= this.size
-    const symbol = squares[ix]
+  getValidMoves() {
+    const playerSymbol = this.getTurnSymbol()
+    const allTokensUsed = this.countPlayerSymbols(playerSymbol) >= this.size
 
-    if (symbol === null) {
-
-      // do not allow to place in the middle as the first move
-      if (turn === 0 && ix === Math.floor(this.size * this.size / 2)) {
+    function isValidMove(ix, turn, squares) {
+      if (turn === 0 && ix === Math.floor(squares.length / 2)) {
         return false
       }
-
-      if (allTokensUsed) {
-        return false
-      }
-
-      squares[ix] = this.getTurnSymbol()
-      this._turn++
-      return true
-    } else if (allTokensUsed && symbol === this.getTurnSymbol()) {
-      squares[ix] = null
-      return true
+  
+      return squares[ix] === null
     }
 
+    if (allTokensUsed) {
+      // first remove one token, then get all free squares
+      const ret = []
+      for(let i = 0; i < this.squares.length; i++) {
+        if (this.getSquareSymbol(i) === playerSymbol) {
+          this.squares[i] = null;
+          const validMoves = this.getValidMoves() // fetches an array of arrays with valid moves
+          this.squares[i] = playerSymbol
+
+          validMoves.forEach((validMove) => {
+              ret.push([ i, validMove[0] ]) // first i must be removed and then moved to ix
+          })
+        }
+      }
+      return ret
+    } else {
+      // all free squares are valid moves
+      const ret = []
+      this.squares.forEach((symbol, ix) => {
+        if (isValidMove(ix, this.turn, this.squares)) {
+          ret.push([ix])
+        }
+      })
+
+      return ret
+    }
+
+  }
+
+  setSquare(ix) {
+    const validMoves = this.getValidMoves()
+    for (let move of validMoves) {
+      if (move[0] === ix) {
+        if (this.squares[ix] === null) {
+          this.squares[ix] = this.getTurnSymbol()
+          this._turn++
+        } else {
+          this.squares[ix] = null
+        }
+        return true
+      }
+    }
     return false
   }
   
