@@ -38,24 +38,44 @@ class Board extends React.Component {
   doNada() {
 
   }
+
+  constructState(game) {
+    return {game: game}
+  }
+
+  isPlayerTurn(game, playerSymbol) {
+    return game.getTurnSymbol() === playerSymbol
+  }
   
   handleClick(i) {
     if (this.state.game.setSquare(i)) {
-      this.setState({game: this.state.game})
+      
+      this.setState(this.constructState(this.state.game))
+
+      const game = this.state.game
+      const thisObject = this
+      setTimeout( function () {
+      // now we do the "ai" move
+        while (thisObject.isPlayerTurn(game, 'O')) {
+          while (!game.setSquare(Math.floor(Math.random() * game.size * game.size)));
+        }
+        thisObject.setState(thisObject.constructState(thisObject.state.game))
+      }, 2000)
+
     }
   }
   
-  renderRow(start, length, winner) {
+  renderRow(start, length, doNada) {
     const range = [...Array(length).keys()]
     return (
        <div className="board-row" key={start}>
-         { range.map((i) => this.renderSquare(start + i, winner))}
+         { range.map((i) => this.renderSquare(start + i, doNada))}
        </div>
     )
   }
 
   getInitialState() {
-    return {game: new TicTacToe(this.sizes[this.size][0])}
+    return this.constructState(new TicTacToe(this.sizes[this.size][0]))
   }
 
   reset() {
@@ -69,7 +89,7 @@ class Board extends React.Component {
       }
     }
 
-    this.setState({game: this.state.game})  // force a render
+    this.setState(this.constructState(this.state.game))  // force a render, possibly the size should be a state
   }
 
   render() {
@@ -83,7 +103,7 @@ class Board extends React.Component {
     return (
       <div>
         <div className="status">{status}</div>
-          { range.map((i) => this.renderRow(i * size, size, winner)) }
+          { range.map((i) => this.renderRow(i * size, size, winner || this.isPlayerTurn(this.state.game, 'O'))) }
 
           <div className="controls">
             <button onClick={() => this.reset()}>
@@ -93,8 +113,6 @@ class Board extends React.Component {
               {this.sizes.map(opt => {return(<option id="{opt[0]}" key={opt[0]}>{opt[1]}</option>)})}
             </select>
           </div>
-
-          
       </div>
     )
   }
