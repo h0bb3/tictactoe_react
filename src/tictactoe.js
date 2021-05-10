@@ -5,7 +5,7 @@ export class TicTacToe {
 
   constructor(size) {
     if (size < 3 || size % 2 !== 1) {
-      throw new TypeError(`The argument size: '${size}' is not valid for tic tac toe (3, 5, 7, ...)`) 
+      throw new Error(`The argument size: '${size}' is not valid for tic tac toe (3, 5, 7, ...)`) 
     }
     this._size = size
     this.reset()
@@ -13,6 +13,16 @@ export class TicTacToe {
 
   get size() {
     return this._size
+  }
+
+  from() {
+    const ret = new TicTacToe(this.size)
+    ret._turn = this.turn
+    for (let i = 0; i < this.squares.length; i++) {
+      ret.squares[i] = this.squares[i]
+    }
+
+    return ret
   }
 
   reset() {
@@ -103,7 +113,9 @@ export class TicTacToe {
           this.squares[i] = playerSymbol
 
           validMoves.forEach((validMove) => {
+            if (i !== validMove[0]) {
               ret.push([ i, validMove[0] ]) // first i must be removed and then moved to ix
+            }
           })
         }
       }
@@ -119,23 +131,37 @@ export class TicTacToe {
 
       return ret
     }
-
   }
 
-  setSquare(ix) {
+  doMove(aMove) {
+    if (!Array.isArray(aMove)) {
+      aMove = [aMove]
+    }
     const validMoves = this.getValidMoves()
     for (let move of validMoves) {
-      if (move[0] === ix) {
-        if (this.squares[ix] === null) {
-          this.squares[ix] = this.getTurnSymbol()
+      if (aMove.length === 2) {
+        if (move.length === 2 && aMove[0] === move[0] && aMove[1] === move[1]) {
+          this.squares[aMove[0]] = null
+          this.squares[aMove[1]] = this.getTurnSymbol()
           this._turn++
-        } else {
-          this.squares[ix] = null
         }
-        return true
+      } else {
+        if (move[0] === aMove[0]) {
+          const ix = aMove[0]
+          if (this.squares[ix] === null) {
+            this.squares[ix] = this.getTurnSymbol()
+            this._turn++
+          } else {
+            this.squares[ix] = null
+          }
+          return true
+        }
       }
     }
-    return false
+  }
+
+  _setSquare(ix, value = this.getTurnSymbol()) {
+    this.squares[ix] = value
   }
   
 }

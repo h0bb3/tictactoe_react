@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
+import { doMinMaxMove, doRandomMove } from './tictactoe-ai'
 import {TicTacToe} from './tictactoe.js'
 
 class Zquare extends React.Component {
@@ -51,7 +52,7 @@ class Board extends React.Component {
   }
   
   handleClick(i) {
-    if (this.state.game.setSquare(i)) {
+    if (this.state.game.doMove(i)) {
       
       this.setState(this.constructState(this.state.game))
 
@@ -60,15 +61,8 @@ class Board extends React.Component {
         const thisObject = this
         setTimeout( function () {
           // now we do the "ai" move
-          const validMoves = game.getValidMoves()
-          let validMove
-          do {
-            validMove = validMoves[Math.floor(Math.random() * validMoves.length)]
-          } while (validMove[0] === validMove[1]) // we discard movement from and to the same square
-          game.setSquare(validMove[0])
-          if (validMove.length > 1) {
-            game.setSquare(validMove[1])
-          }
+          //doRandomMove(game)
+          doMinMaxMove(game)
           thisObject.setState(thisObject.constructState(thisObject.state.game))
         }, 2000)
       }
@@ -133,7 +127,7 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board size={'5x5'}/>
         </div>
         <div className="game-info">
           <div>{/* status */}</div>
