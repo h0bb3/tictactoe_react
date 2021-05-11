@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
-import { doMinMaxMove, doRandomMove } from './tictactoe-ai'
+import { doNegimaxMove, doRandomMove } from './tictactoe-ai'
 import {TicTacToe} from './tictactoe.js'
 
 class Zquare extends React.Component {
@@ -62,7 +62,7 @@ class Board extends React.Component {
         setTimeout( function () {
           // now we do the "ai" move
           //doRandomMove(game)
-          doMinMaxMove(game)
+          doNegimaxMove(game)
           thisObject.setState(thisObject.constructState(thisObject.state.game))
         }, 2000)
       }

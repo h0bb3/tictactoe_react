@@ -30,31 +30,21 @@ export class TicTacToe {
     this.squares = Array(this.size * this.size).fill(null)
   }
 
-  _checkSegment(startIx, stride, length) {
+  _scoreSegment(startIx, stride, length, symbol = this.squares[startIx]) {
     const squares = this.squares
-    const symbol = squares[startIx]
+    let score = 0
       
-    if (symbol !== null) {
-      let found = true
-      startIx += stride
-      for (let cIx = 1; cIx < length; cIx++, startIx += stride) {
-        if (symbol !== squares[startIx]) {
-          found = false
-          break
-        }
-      }
-
-      if (found) {
-        return symbol
+    for (let cIx = 0; cIx < length; cIx++, startIx += stride) {
+      if (symbol === squares[startIx]) {
+        score++
       }
     }
 
-    return false
+    return score
   }
 
-  checkWinner() {
+  _getChecks() {
     const size = this.size
-
     // checks array with start and stride parameters
     let checks = [[0, size + 1], [size - 1, size - 1]]  // the diagonal checks
 
@@ -64,11 +54,33 @@ export class TicTacToe {
       checks.push([ix, size])
     }
 
+    return checks
+  }
+
+  getScore(playerSymbol) {
+    const checks = this._getChecks()
+    let maxScore = 0
+    const size = this.size
+
+    for (let cIx = 0; cIx < checks.length; cIx++) {
+      const score = this._scoreSegment(checks[cIx][0], checks[cIx][1], size, playerSymbol)
+      if (score > maxScore) {
+        maxScore = score
+      }
+    }
+
+    return maxScore
+  }
+
+  checkWinner() {
+    const size = this.size
+    const checks = this._getChecks()
+    
+
     // perform the checks
     for (let cIx = 0; cIx < checks.length; cIx++) {
-      const symbol = this._checkSegment(checks[cIx][0], checks[cIx][1], size)
-      if (symbol) {
-        return symbol
+      if (this._scoreSegment(checks[cIx][0], checks[cIx][1], size) === size) {
+        return this.squares[checks[cIx][0]]
       }
     }
 
