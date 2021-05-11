@@ -22,6 +22,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# vscode
+/.vscode
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db

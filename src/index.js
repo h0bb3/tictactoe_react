@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
+import { doNegimaxMove, doRandomMove } from './tictactoe-ai'
+import {TicTacToe} from './tictactoe.js'
 
 class Zquare extends React.Component {
   
@@ -23,54 +25,100 @@ class Zquare extends React.Component {
 class Board extends React.Component {
   constructor(props) {
     super(props)
-    const size = 3
-    this.state = {
-      turn: 0,
-      squares: Array(size * size).fill(null)
-    }
+    this.size = 0 // decides the side 0 -> 3x3 etc
+    this.sizes = [[3, '3x3'], [5, '5x5'], [7, '7x7'], [9, '9x9']]
+    
+    this.state = this.getInitialState()
+
+    this.aiPlayerSymbol = this.state.game.getTurnSymbol(1)
+
   }
-  renderSquare(i) {
-    return <Zquare value={this.state.squares[i]}
-             onClick={()=>this.handleClick(i)}
+  renderSquare(i, doNada) {
+    return <Zquare value={this.state.game.getSquareSymbol(i)}
+             onClick={()=> doNada ? this.doNada() : this.handleClick(i)}
              key={i}/>
   }
 
-  getTurnSymbol(turn) {
-    return turn % 2 === 0 ? 'X' : 'O'
+  doNada() {
+
+  }
+
+  constructState(game) {
+    return {game: game}
+  }
+
+  isPlayerTurn(game, playerSymbol) {
+    return game.getTurnSymbol() === playerSymbol
   }
   
   handleClick(i) {
-    const squares = this.state.squares.slice();
-    const turn = this.state.turn
-    if (squares[i] === null) {
-      squares[i] = this.getTurnSymbol(turn)
-      this.setState({squares: squares, turn: turn + 1})
-    } else {
-      squares[i] = null
-      this.setState({squares: squares, turn: turn})
+    if (this.state.game.doMove(i)) {
+      
+      this.setState(this.constructState(this.state.game))
+
+      if (!this.state.game.checkWinner() && this.isPlayerTurn(this.state.game, this.aiPlayerSymbol)) {
+        const game = this.state.game
+        const thisObject = this
+        setTimeout( function () {
+          // now we do the "ai" move
+          //doRandomMove(game)
+          doNegimaxMove(game)
+          thisObject.setState(thisObject.constructState(thisObject.state.game))
+        }, 2000)
+      }
     }
   }
   
-  renderRow(start, length) {
+  renderRow(start, length, doNada) {
     const range = [...Array(length).keys()]
     return (
        <div className="board-row" key={start}>
-         { range.map((i) => this.renderSquare(start + i))}
+         { range.map((i) => this.renderSquare(start + i, doNada))}
        </div>
     )
   }
 
+  getInitialState() {
+    return this.constructState(new TicTacToe(this.sizes[this.size][0]))
+  }
+
+  reset() {
+    this.setState(this.getInitialState())
+  }
+
+  setSize(size) {
+    for (let i = 0; i < this.sizes.length; i++) {
+      if (size === this.sizes[i][1]) {
+        this.size = i
+      }
+    }
+
+    this.setState(this.constructState(this.state.game))  // force a render, possibly the size should be a state
+  }
+
   render() {
-    const turn = this.state.turn
-    const status = 'Next player: ' + this.getTurnSymbol(turn)
-    const size = Math.floor(Math.sqrt(this.state.squares.length))
+    let status = `Turn: ${this.state.game.turn + 1} Next Player: ${this.state.game.getTurnSymbol()}`
+    const winner = this.state.game.checkWinner()
+    const size = this.state.game.size
+    if (winner) {
+      status = `Winner is: ${winner} at Turn: ${this.state.game.turn}`
+    }
     const range = [...Array(size).keys()]
     return (
       <div>
         <div className="status">{status}</div>
-          { range.map((i) => this.renderRow(i * size, size)) }
+          { range.map((i) => this.renderRow(i * size, size, winner || this.isPlayerTurn(this.state.game, this.aiPlayerSymbol))) }
+
+          <div className="controls">
+            <button onClick={() => this.reset()}>
+              Reset game
+            </button>
+            <select name="game_size" value={this.sizes[this.size][1]} onChange={event => this.setSize(event.target.value)}>
+              {this.sizes.map(opt => {return(<option id="{opt[0]}" key={opt[0]}>{opt[1]}</option>)})}
+            </select>
+          </div>
       </div>
-    );
+    )
   }
 }
 
@@ -79,7 +127,7 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board size={'5x5'}/>
         </div>
         <div className="game-info">
           <div>{/* status */}</div>
