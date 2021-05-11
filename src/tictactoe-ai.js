@@ -67,7 +67,7 @@ function getNegiMaxMove(tttGame, depth, maxDepth) {
   // select a random move among the higest performing moves
   tieMoves.sort((a, b) => b - a)
   if (tieMoves.length > 1) {
-    while(tieMoves[0][0] != tieMoves[tieMoves.length - 1][0]) {
+    while(tieMoves[0][0] !== tieMoves[tieMoves.length - 1][0]) {
       tieMoves.pop()
     }
   }

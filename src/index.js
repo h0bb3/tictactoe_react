@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
-import { doNegimaxMove, doRandomMove } from './tictactoe-ai'
+import { doNegimaxMove } from './tictactoe-ai'
 import {TicTacToe} from './tictactoe.js'
 
 class Zquare extends React.Component {
