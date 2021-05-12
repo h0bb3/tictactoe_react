@@ -7,7 +7,9 @@ A simple tic tac toe game made in react. Based on the [react tutorial](https://r
 ## Changes in this version:
 
 * DRY: Board size can be changed, and this information is stored in one and only one place.
-* DRY: Rendering of squares has been refactored with duplication 
+* DRY: Rendering of squares has been refactored with duplication
+* Separation of concerns: game is refactored into it's own class
+* AI player using negimax algorithm 
 
 # Getting Started with Create React App
 
