@@ -4,7 +4,7 @@
 # TicTacToe
 A simple tic tac toe game made in react. Based on the [react tutorial](https://reactjs.org/tutorial/tutorial.htm) with the goal to learn and improve.
 
-The game is deployed on [github pages](https://tobias-dv-lnu.github.io/tictactoe_react/
+[Play Tic Tac Toe](https://tobias-dv-lnu.github.io/tictactoe_react/) deployed on github pages.
 
 ## Changes in this version:
 
