@@ -4,10 +4,12 @@
 # TicTacToe
 A simple tic tac toe game made in react. Based on the [react tutorial](https://reactjs.org/tutorial/tutorial.htm) with the goal to learn and improve.
 
+The game is deployed on [github pages](https://tobias-dv-lnu.github.io/tictactoe_react/
+
 ## Changes in this version:
 
-* DRY: Board size can be changed, and this information is stored in one and only one place.
-* DRY: Rendering of squares has been refactored with duplication
+* DRY: Board size can be changed, and this information is stored in one and only one place
+* DRY: Rendering of squares has been refactored
 * Separation of concerns: game is refactored into it's own class
 * AI player using negimax algorithm 
 * Test: Automatic tests of game using chai/mocha
