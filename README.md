@@ -10,6 +10,8 @@ A simple tic tac toe game made in react. Based on the [react tutorial](https://r
 * DRY: Rendering of squares has been refactored with duplication
 * Separation of concerns: game is refactored into it's own class
 * AI player using negimax algorithm 
+* Test: Automatic tests of game using chai/mocha
+* (Continous automatic build and deploy)
 
 # Getting Started with Create React App
 
