@@ -116,7 +116,7 @@ export class TicTacToe {
     }
 
     if (allTokensUsed) {
-      // first remove one token, then get all free _squares
+      // first remove one token, then get all free squares
       const ret = []
       for(let i = 0; i < this._squares.length; i++) {
         if (this.getSquareSymbol(i) === playerSymbol) {
@@ -133,7 +133,7 @@ export class TicTacToe {
       }
       return ret
     } else {
-      // all free _squares are valid moves
+      // all free squares are valid moves
       const ret = []
       this._squares.forEach((symbol, ix) => {
         if (isValidMove(ix, this.turn, this._squares)) {
@@ -146,20 +146,21 @@ export class TicTacToe {
   }
 
   doMove(aMove) {
-    if (!Array.isArray(aMove)) {
-      aMove = [aMove]
+    if (Number.isInteger(aMove)) {
+      aMove = {to:aMove}
     }
     const validMoves = this.getValidMoves()
     for (let move of validMoves) {
-      if (aMove.length === 2) {
-        if (move.length === 2 && aMove[0] === move[0] && aMove[1] === move[1]) {
-          this._squares[aMove[0]] = null
-          this._squares[aMove[1]] = this.getTurnSymbol()
+      if (aMove.from !== undefined) {
+        if (move.length === 2 && aMove.from === move[0] && aMove.to === move[1]) {
+          this._squares[aMove.from] = null
+          this._squares[aMove.to] = this.getTurnSymbol()
           this._turn++
+          return true
         }
       } else {
-        if (move[0] === aMove[0]) {
-          const ix = aMove[0]
+        if (move[0] === aMove.to) {
+          const ix = aMove.to
           if (this._squares[ix] === null) {
             this._squares[ix] = this.getTurnSymbol()
             this._turn++
@@ -170,6 +171,7 @@ export class TicTacToe {
         }
       }
     }
+    return false
   }
 
   _setSquare(ix, value = this.getTurnSymbol()) {
