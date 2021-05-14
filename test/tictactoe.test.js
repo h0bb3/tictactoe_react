@@ -217,6 +217,20 @@ describe('TicTacToe', () => {
       expect(sut.doMove(6)).to.equal(false)
     })
 
+    it(`should accept a remove move after all tokens are placed`, () => {
+      const size = 3
+      
+      const sut = new TicTacToe(size)
+      for (let square = 0; square < size * 2; square++) {
+        sut.doMove(square)
+      }
+      // XOX
+      // OXO
+      // ---
+
+      expect(sut.doMove(6)).to.equal(false)
+    })
+
   })
 
 })

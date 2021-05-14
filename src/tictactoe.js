@@ -125,8 +125,8 @@ export class TicTacToe {
           this._squares[i] = playerSymbol
 
           validMoves.forEach((validMove) => {
-            if (i !== validMove[0]) {
-              ret.push([ i, validMove[0] ]) // first i must be removed and then moved to ix
+            if (i !== validMove.to) {
+              ret.push({ from: i, to: validMove.to }) // first i must be removed and then moved to ix
             }
           })
         }
@@ -137,7 +137,7 @@ export class TicTacToe {
       const ret = []
       this._squares.forEach((symbol, ix) => {
         if (isValidMove(ix, this.turn, this._squares)) {
-          ret.push([ix])
+          ret.push({to:ix})
         }
       })
 
@@ -147,35 +147,31 @@ export class TicTacToe {
 
   doMove(aMove) {
     if (Number.isInteger(aMove)) {
-      aMove = {to:aMove}
+      if (this._squares[aMove] === null) {
+        aMove = {to:aMove}
+      } else {
+        aMove = {from:aMove}
+      }
     }
     const validMoves = this.getValidMoves()
+    
     for (let move of validMoves) {
-      if (aMove.from !== undefined) {
-        if (move.length === 2 && aMove.from === move[0] && aMove.to === move[1]) {
+      
+      const movedFrom = aMove.from === move.from
+      const movedTo = aMove.to === undefined || aMove.to === move.to
+    
+      if (movedFrom && movedTo) {
+        if (aMove.from !== undefined) {
           this._squares[aMove.from] = null
+        }
+        if (aMove.to !== undefined) {
           this._squares[aMove.to] = this.getTurnSymbol()
           this._turn++
-          return true
         }
-      } else {
-        if (move[0] === aMove.to) {
-          const ix = aMove.to
-          if (this._squares[ix] === null) {
-            this._squares[ix] = this.getTurnSymbol()
-            this._turn++
-          } else {
-            this._squares[ix] = null
-          }
-          return true
-        }
+        return true
       }
     }
     return false
-  }
-
-  _setSquare(ix, value = this.getTurnSymbol()) {
-    this._squares[ix] = value
   }
   
 }
