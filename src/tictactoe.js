@@ -147,20 +147,13 @@ export class TicTacToe {
 
   doMove(aMove) {
     if (Number.isInteger(aMove)) {
-      if (this._squares[aMove] === null) {
-        aMove = {to:aMove}
-      } else {
-        aMove = {from:aMove}
-      }
+      aMove = this._squares[aMove] === null ? {to: aMove} : {from:aMove}
     }
     const validMoves = this.getValidMoves()
     
     for (let move of validMoves) {
-      
-      const movedFrom = aMove.from === move.from
-      const movedTo = aMove.to === undefined || aMove.to === move.to
     
-      if (movedFrom && movedTo) {
+      if ((aMove.from === move.from) && (aMove.to === undefined || aMove.to === move.to)) {
         if (aMove.from !== undefined) {
           this._squares[aMove.from] = null
         }
