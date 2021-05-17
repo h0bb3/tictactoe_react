@@ -126,13 +126,22 @@ function Status(props) {
   )
 }
 
+function Highscore(props) {
+  return (
+    <div className="game-highscore">
+      <p>Highscores</p>
+      <ol> {props.scores.map((score, ix) => {return(<li>{score}</li>)})}</ol>
+    </div>
+  )
+}
+
 class Game extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
       status: "Game Not Started",
-      scores: [1, 2, 3]
+      scores: []
     }
   }
 
@@ -159,10 +168,8 @@ class Game extends React.Component {
         <div className="game-board">
           <Board onGameUpdate = {(tttGame) => {this.onGameUpdate(tttGame)}}/>
         </div>
-        <div className="game-info">
-          <p>Highscores</p>
-          <ol> {this.state.scores.map((score, ix) => {return(<li>{score}</li>)})}</ol>
-        </div>
+        <Highscore scores = {this.state.scores} />
+        
       </div>
     )
   }
