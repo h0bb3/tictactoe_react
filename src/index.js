@@ -6,13 +6,6 @@ import {TicTacToe} from './tictactoe.js'
 
 class Zquare extends React.Component {
   
-  constructor(props) {
-    super(props)
-    this.state = {
-      value: null
-    }
-  }
-  
   render() {
     return (
       <button className="square" onClick={() => this.props.onClick()}>
@@ -29,6 +22,7 @@ class Board extends React.Component {
     this.sizes = [[3, '3x3'], [5, '5x5'], [7, '7x7'], [9, '9x9']]
     
     this.state = this.getInitialState()
+    this.reset()
 
     this.aiPlayerSymbol = this.state.game.getTurnSymbol(1)
 
@@ -78,6 +72,13 @@ class Board extends React.Component {
     )
   }
 
+  setState(state) {
+    if (this.props.onGameUpdate !== undefined) {
+      this.props.onGameUpdate(state.game)
+    }
+    super.setState(state)
+  }
+
   getInitialState() {
     return this.constructState(new TicTacToe(this.sizes[this.size][0]))
   }
@@ -97,16 +98,13 @@ class Board extends React.Component {
   }
 
   render() {
-    let status = `Turn: ${this.state.game.turn + 1} Next Player: ${this.state.game.getTurnSymbol()}`
+    
     const winner = this.state.game.checkWinner()
     const size = this.state.game.size
-    if (winner) {
-      status = `Winner is: ${winner} at Turn: ${this.state.game.turn}`
-    }
+
     const range = [...Array(size).keys()]
     return (
       <div>
-        <div className="status">{status}</div>
           { range.map((i) => this.renderRow(i * size, size, winner || this.isPlayerTurn(this.state.game, this.aiPlayerSymbol))) }
 
           <div className="controls">
@@ -122,16 +120,48 @@ class Board extends React.Component {
   }
 }
 
+function Status(props) {
+  return (
+    <div>{props.status}</div>
+  )
+}
+
 class Game extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      status: "Game Not Started",
+      scores: [1, 2, 3]
+    }
+  }
+
+  onGameUpdate(tttGame) {
+    let state = `Turn: ${tttGame.turn + 1} Next Player: ${tttGame.getTurnSymbol()}`
+
+    const winner = tttGame.checkWinner()
+    let scores = [...this.state.scores]
+    if (winner) {
+      state = `Winner is: ${winner} at Turn: ${tttGame.turn}`
+      scores.push(tttGame.turn)
+      scores.sort((a, b) => { return b - a })
+    }
+
+    this.setState({status: state, scores: scores})
+  }
+
   render() {
     return (
       <div className="game">
+        <div className="game-info">
+          <Status status={this.state.status}/>  
+        </div>
         <div className="game-board">
-          <Board size={'5x5'}/>
+          <Board onGameUpdate = {(tttGame) => {this.onGameUpdate(tttGame)}}/>
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
+          <p>Highscores</p>
+          <ol> {this.state.scores.map((score, ix) => {return(<li>{score}</li>)})}</ol>
         </div>
       </div>
     )
