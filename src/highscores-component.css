@@ -1,0 +1,15 @@
+.highscores {
+  display: flex;
+  flex-direction: column;
+  font-size: xx-large;
+}
+
+.highscores .score-row {
+  font-size: large;
+  text-align: left;
+}
+.highscores th {
+  font-weight: normal;
+  font-size: x-large;
+  text-align: left;
+}
