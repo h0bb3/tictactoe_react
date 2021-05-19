@@ -1,8 +1,6 @@
 import './highscores-component.css'
 export function HighscoresComponent(props) {
 
-  
-
   return (
     <div className="highscores">
       <h2>Highscores</h2>
@@ -19,6 +17,6 @@ export function HighscoresComponent(props) {
 }
 
 function timeToString(scoreTime) {
-  const [day, month, date, year, time] = scoreTime.split(" ")
-  return `${date} ${month} ${year} - ${time}`
+  const [, month, date, year, time] = scoreTime.split(" ")
+  return `${date} ${month} ${year} - ${time}` // to avoid unused var problem in eslint
 }
