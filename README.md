@@ -10,8 +10,9 @@ You can [play Tic Tac Toe](https://tobias-dv-lnu.github.io/tictactoe_react/) as 
 
 * DRY: Board size can be changed, and this information is stored in one and only one place
 * DRY: Rendering of squares has been refactored
-* Separation of concerns: game is refactored into it's own class
-* AI player using negimax algorithm 
+* SoC: game is refactored into it's own class
+* Feature: AI player using negimax algorithm
+* Feature: Highscores in localstorage
 * Test: Automatic tests of game using chai/mocha
 * (Continous automatic build and deploy)
 

@@ -153,7 +153,7 @@ export class TicTacToe {
     
     for (let move of validMoves) {
     
-      if ((aMove.from === move.from) && (aMove.to === undefined || aMove.to === move.to)) {
+      if (aMove.from === move.from && (aMove.to === undefined || aMove.to === move.to)) {
         if (aMove.from !== undefined) {
           this._squares[aMove.from] = null
         }
