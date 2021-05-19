@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
-import {HighscoresComponent} from './highscores-component'
-import {NameFormComponent} from './nameform-component'
+import {HighscoresComponent} from './components/highscores/highscores-component'
+import {NameFormComponent} from './components/nameform/nameform-component'
+import {BoardComponent} from './components/board/board-component'
 import {Highscores} from './highscores'
-import {BoardComponent} from './board-component'
 import { TicTacToe } from './tictactoe'
 import { doNegimaxMove } from './tictactoe-ai'
 

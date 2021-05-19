@@ -50,3 +50,8 @@ ol, ul {
   display: flex;
   flex-direction: column;
 }
+
+.game-board {
+  display: flex;
+  justify-content: center;
+}
