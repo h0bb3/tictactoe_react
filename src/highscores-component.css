@@ -1,7 +1,6 @@
 .highscores {
   display: flex;
   flex-direction: column;
-  font-size: xx-large;
 }
 
 .highscores .score-row {
@@ -9,7 +8,7 @@
   text-align: left;
 }
 .highscores th {
-  font-weight: normal;
-  font-size: x-large;
+  font-weight: bold;
+  font-size: large;
   text-align: left;
 }

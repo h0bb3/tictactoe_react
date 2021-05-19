@@ -2,7 +2,7 @@ import './highscores-component.css'
 export function HighscoresComponent(props) {
   return (
     <div className="highscores">
-      <p>Highscores</p>
+      <h2>Highscores</h2>
       <table>
         <thead><tr><th>Score</th><th>Name</th></tr></thead>
         <tbody>

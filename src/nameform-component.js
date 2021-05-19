@@ -4,9 +4,6 @@ export class NameFormComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {value: ''}
-
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   handleChange(event) {
@@ -22,13 +19,15 @@ export class NameFormComponent extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <div>
+        <h2>You Made it to the Highscores</h2>
+      <form onSubmit={(event) => {return this.handleSubmit(event)}}>
         <label>
-          Name:
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
+          Enter Name: 
+          <input type="text" value={this.state.value} onChange={(event) => {return this.handleChange(event)}} />
         </label>
-        <input type="submit" value="Submit" />
       </form>
+      </div>
     );
   }
 }
