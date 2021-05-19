@@ -1,5 +1,5 @@
 import React from 'react'
-
+import './board-component.css'
 
 class Zquare extends React.Component {
   
@@ -46,8 +46,6 @@ export class BoardComponent extends React.Component {
       <div className="game-board">
       <div>
           { range.map((i) => this.renderRow(i * size, size, doNada)) }
-
-          
       </div>
       </div>
     )
