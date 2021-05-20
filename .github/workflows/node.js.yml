@@ -28,6 +28,7 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
+    - run: npm react-test
     - name: Upload production-ready build files
       uses: actions/upload-artifact@v2
       with:
