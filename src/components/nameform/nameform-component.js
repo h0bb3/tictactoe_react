@@ -11,7 +11,7 @@ export class NameFormComponent extends React.Component {
   }
 
   handleSubmit(event) {
-    event.preventDefault();
+    event.preventDefault()
     if (this.props.onNameSubmitted) {
       this.props.onNameSubmitted(this.state.value)
     }
