@@ -13,7 +13,8 @@ You can [play Tic Tac Toe](https://tobias-dv-lnu.github.io/tictactoe_react/) as 
 * SoC: game is refactored into it's own class
 * Feature: AI player using negimax algorithm
 * Feature: Highscores in localstorage
-* Test: Automatic tests of game using chai/mocha
+* Test: Automatic unit tests of functionality using chai/mocha
+* Test: Automatic tests of components using Jest/Enzyme
 * (Continous automatic build and deploy)
 
 # Getting Started with Create React App
@@ -33,6 +34,7 @@ The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
 ### `npm test`
+### `npm run react-test`
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
