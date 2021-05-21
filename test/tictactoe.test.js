@@ -1,6 +1,6 @@
 import chai from 'chai'
 
-import {TicTacToe} from '../src/tictactoe.js'
+import {TicTacToe} from '../src/model/tictactoe.js'
 
 const expect = chai.expect
 

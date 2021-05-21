@@ -3,9 +3,9 @@ import './game-component.css'
 import {HighscoresComponent} from '../highscores/highscores-component'
 import {NameFormComponent} from '../nameform/nameform-component'
 import {BoardComponent} from '../board/board-component'
-import {Highscores} from '../../highscores'
-import { TicTacToe } from '../../tictactoe'
-import { doNegimaxMove } from '../../tictactoe-ai'
+import {Highscores} from '../../model/highscores'
+import { TicTacToe } from '../../model/tictactoe'
+import { doNegimaxMove } from '../../model/tictactoe-ai'
 
 
 function Status(props) {
