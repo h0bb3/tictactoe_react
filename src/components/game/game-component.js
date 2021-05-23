@@ -39,17 +39,16 @@ export class Game extends React.Component {
           
       if (!this.state.game.checkWinner() && this.isAITurn()) {
         const game = this.state.game
-        const thisObject = this
         
         if (this.props.noAITimer) {
           doNegimaxMove(game)
-          thisObject.onGameUpdate(thisObject.state.game)
+          this.onGameUpdate(this.state.game)
         } else {
           // this simulates some thinking time that makes the experience better
           setTimeout( function () {
             doNegimaxMove(game)
-            thisObject.onGameUpdate(thisObject.state.game)
-          }, 2000)
+            this.onGameUpdate(this.state.game)
+          }.bind(this), 2000)
         }
       }
     }
