@@ -11,10 +11,10 @@ You can [play Tic Tac Toe](https://tobias-dv-lnu.github.io/tictactoe_react/) as 
 * DRY: Board size can be changed, and this information is stored in one and only one place
 * DRY: Rendering of squares has been refactored
 * SoC: game is refactored into it's own class
-* Feature: AI player using negimax algorithm
+* Feature: AI player using negimax algorithm running as web worker with the help of `react-app-rewired` and `worker-loader`
 * Feature: Highscores in localstorage
 * Test: Automatic unit tests of functionality using chai/mocha
-* Test: Automatic tests of components using Jest/Enzyme
+* Test: Automatic tests of components using Jest/Enzyme, incuding mocking of web worker
 * (Continous automatic build and deploy)
 
 # Getting Started with Create React App
