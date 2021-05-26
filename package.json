@@ -16,11 +16,11 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
     "test": "npx mocha --recursive || exit 0",
-    "eject": "react-scripts eject",
-    "react-test": "react-scripts test"
+    "eject": "react-app-rewired eject",
+    "react-test": "react-app-rewired test --env=jsdom"
   },
   "eslintConfig": {
     "extends": [
@@ -41,6 +41,17 @@
   },
   "devDependencies": {
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.1",
-    "enzyme": "^3.11.0"
+    "enzyme": "^3.11.0",
+    "react-app-rewired": "^2.1.8",
+    "worker-loader": "^3.0.8"
+  },
+  
+  "jest": {
+    "verbose": true,
+    "moduleNameMapper": {
+      "\\worker-wrapper":"<rootDir>/src/components/__mocks__/ai-worker-wrapper.mock.js"
+    }
+
   }
+  
 }

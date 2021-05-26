@@ -39,4 +39,17 @@ describe('<Game/>', () => {
     expect(game.countPlayerSymbols(game.getTurnSymbol(1))).toEqual(1)
   })
 
+  it ('has an ai that does not crash', () => {
+    const wrapper = mount(<Game/>)
+    const board = wrapper.find('BoardComponent')
+    const buttons = board.find('button')
+    const game = wrapper.state().game
+
+    jest.useFakeTimers()
+    buttons.at(8).simulate('click') // human move
+    jest.advanceTimersByTime(2000)
+    
+    //expect(game.countPlayerSymbols(game.getTurnSymbol(1))).toEqual(1)
+  })
+
 })

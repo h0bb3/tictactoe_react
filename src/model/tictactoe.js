@@ -1,8 +1,4 @@
 export class TicTacToe {
-  #_size
-  #_turn
-  #_squares
-
   constructor(size) {
     if (size < 3 || size % 2 !== 1) {
       throw new Error(`The argument size: '${size}' is not valid for tic tac toe (3, 5, 7, ...)`) 
@@ -13,6 +9,27 @@ export class TicTacToe {
 
   get size() {
     return this._size
+  }
+
+  get turn() {
+    return this._turn
+  }
+
+  get squares() {
+    return [...this._squares]
+  }
+
+  static createFrom(squares, turn) {
+    const ret = new TicTacToe(Math.floor(Math.sqrt(squares.length)))
+    ret._turn = turn
+    if (ret._squares.length !== squares.length) {
+      throw new Error(`The argument squares length: '${squares.length}' is not valid for tic tac toe (9, 25, 49, ...)`) 
+    }
+    for (let i = 0; i < squares.length; i++) {
+      ret._squares[i] = squares[i]
+    }
+
+    return ret
   }
 
   from() {
@@ -85,10 +102,6 @@ export class TicTacToe {
     }
 
     return false
-  }
-
-  get turn() {
-    return this._turn
   }
 
   getTurnSymbol(turn = this.turn) {

@@ -1,5 +1,6 @@
 import React from 'react'
 import './game-component.css'
+import {AiWorkerWrapper} from './tictactoe-ai-worker-wrapper'
 import {HighscoresComponent} from '../highscores/highscores-component'
 import {NameFormComponent} from '../nameform/nameform-component'
 import {BoardComponent} from '../board/board-component'
@@ -31,24 +32,30 @@ export class Game extends React.Component {
       scores: new Highscores(),
       game: new TicTacToe(3)
     }
+
+    this.aiWorker = new AiWorkerWrapper()
+    this.aiWorker.addEventListener('message', (event) => {this.onBoardClick(event.data.ix)});
   }
 
   onBoardClick(squareIx) {
+    const oldTurn = this.state.game.turn
     if (this.state.game.doMove(squareIx)) {
+      
       this.onGameUpdate(this.state.game)
-          
-      if (!this.state.game.checkWinner() && this.isAITurn()) {
+      
+      // the ai may send 1 click (to remove a symbol) then we should not start the ai again
+      // so we need to check that the turn has gone from human to ai
+      if (!this.state.game.checkWinner() && this.isAITurn() && oldTurn !== this.state.game.turn) {
         const game = this.state.game
-        const thisObject = this
         
         if (this.props.noAITimer) {
-          doNegimaxMove(game)
-          thisObject.onGameUpdate(thisObject.state.game)
+          const move = doNegimaxMove(game)
+          game.doMove(move)
+          this.onGameUpdate(this.state.game)
         } else {
           // this simulates some thinking time that makes the experience better
-          setTimeout( function () {
-            doNegimaxMove(game)
-            thisObject.onGameUpdate(thisObject.state.game)
+          setTimeout( () => {
+            this.aiWorker.postMessage({gameSquares: game.squares, turn: game.turn})
           }, 2000)
         }
       }

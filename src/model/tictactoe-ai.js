@@ -9,8 +9,8 @@ export function doRandomMove(tttGame) {
   let validMove
   do {
     validMove = validMoves[Math.floor(Math.random() * validMoves.length)]
-  } while (validMove[0] === validMove[1]) // we discard movement from and to the same square
-  tttGame.doMove(validMove)
+  } while (validMove.to === validMove.from) // we discard movement from and to the same square
+  return validMove
 }
 
 export function doNegimaxMove(tttGame) {
@@ -18,15 +18,16 @@ export function doNegimaxMove(tttGame) {
     throw new TypeError('argument tttGame is not an instance of TicTacToe')
   }
 
+
   const tttGameCopy = tttGame.from()
   const maxDepth = tttGame.size < 5 ? 6 : 2
   const validMove = getNegiMaxMove(tttGameCopy, 0, maxDepth)
   if (Array.isArray(validMove)) {
-    tttGame.doMove(validMove[1])
-  } else {
-    console.log("AI is screwed... doing random move")
-    doRandomMove(tttGame)
-  }
+    return validMove[1]
+  } 
+  
+  console.log("AI is screwed... doing random move")
+  return doRandomMove(tttGame)
   
 }
 
