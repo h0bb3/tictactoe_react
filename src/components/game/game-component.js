@@ -6,7 +6,6 @@ import {NameFormComponent} from '../nameform/nameform-component'
 import {BoardComponent} from '../board/board-component'
 import {Highscores} from '../../model/highscores'
 import { TicTacToe } from '../../model/tictactoe'
-import { doNegimaxMove } from '../../model/tictactoe-ai'
 
 
 function Status(props) {
@@ -33,8 +32,14 @@ export class Game extends React.Component {
       game: new TicTacToe(3)
     }
 
+    this._aiWaitTime = 2000
+
     this.aiWorker = new AiWorkerWrapper()
     this.aiWorker.addEventListener('message', (event) => {this.onBoardClick(event.data.ix)});
+  }
+
+  get aiWaitTime() {
+    return this._aiWaitTime
   }
 
   onBoardClick(squareIx) {
@@ -47,17 +52,11 @@ export class Game extends React.Component {
       // so we need to check that the turn has gone from human to ai
       if (!this.state.game.checkWinner() && this.isAITurn() && oldTurn !== this.state.game.turn) {
         const game = this.state.game
-        
-        if (this.props.noAITimer) {
-          const move = doNegimaxMove(game)
-          game.doMove(move)
-          this.onGameUpdate(this.state.game)
-        } else {
-          // this simulates some thinking time that makes the experience better
-          setTimeout( () => {
-            this.aiWorker.postMessage({gameSquares: game.squares, turn: game.turn})
-          }, 2000)
-        }
+      
+        // this simulates some thinking time that makes the experience better
+        setTimeout( () => {
+          this.aiWorker.postMessage({gameSquares: game.squares, turn: game.turn})
+        }, this.aiWaitTime)
       }
     }
   }

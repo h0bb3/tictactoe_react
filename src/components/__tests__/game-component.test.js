@@ -29,12 +29,14 @@ describe('<Game/>', () => {
   })
 
   it ('should let the ai play as the second player', () => {
-    const wrapper = mount(<Game noAITimer={true}/>)
+    const wrapper = mount(<Game/>)
     const board = wrapper.find('BoardComponent')
     const buttons = board.find('button')
     const game = wrapper.state().game
 
+    jest.useFakeTimers()
     buttons.at(8).simulate('click') // human move
+    jest.advanceTimersByTime(wrapper.aiWaitTime)
     
     expect(game.countPlayerSymbols(game.getTurnSymbol(1))).toEqual(1)
   })
@@ -47,9 +49,9 @@ describe('<Game/>', () => {
 
     jest.useFakeTimers()
     buttons.at(8).simulate('click') // human move
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(wrapper.aiWaitTime)
     
-    //expect(game.countPlayerSymbols(game.getTurnSymbol(1))).toEqual(1)
+    expect(game.countPlayerSymbols(game.getTurnSymbol(1))).toEqual(1)
   })
 
 })
