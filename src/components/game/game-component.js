@@ -28,7 +28,7 @@ export class Game extends React.Component {
     super(props)
     this.state = {
       status: "Game Not Started",
-      scores: new Highscores(),
+      scores: new Highscores(localStorage),
       game: new TicTacToe(3)
     }
 

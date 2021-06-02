@@ -1,9 +1,11 @@
 
 export class Highscores {
   #_scores
+  #_storageAPI
 
-  constructor() {
-    this._scores = localStorage.getItem('scores') ? JSON.parse(localStorage.getItem('scores')) : [];
+  constructor(storageAPI) {
+    this._storageAPI = storageAPI
+    this._scores = this._storageAPI.getItem('scores') ? JSON.parse(localStorage.getItem('scores')) : [];
   }
 
   addScore(score, name) {
@@ -17,7 +19,7 @@ export class Highscores {
   }
 
   _save() {
-    localStorage.setItem('scores', JSON.stringify(this._scores))
+    this._storageAPI.setItem('scores', JSON.stringify(this._scores))
   }
 
   reset() {
