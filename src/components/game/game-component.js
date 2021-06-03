@@ -28,7 +28,7 @@ export class Game extends React.Component {
     super(props)
     this.state = {
       status: "Game Not Started",
-      scores: new Highscores(localStorage),
+      scores: new Highscores(props.localStorage !== undefined ? props.localStorage : localStorage),
       game: new TicTacToe(3)
     }
 
@@ -71,9 +71,10 @@ export class Game extends React.Component {
     this.setState({game: tttGame, scores: this.state.scores, newScore: newScore})
   }
 
-  onNameSubmitted(name) {
-    this.state.scores.addScore(this.state.newScore, name)
-    this.setState({game: this.state.game, scores: this.state.scores, newScore: undefined})
+  onNameSubmitted(name, score) {
+    if (this.state.scores.addScore(score, name)) {
+      this.setState({game: this.state.game, scores: this.state.scores, newScore: undefined})
+    }
   }
   
   isAITurn() {
@@ -111,7 +112,7 @@ export class Game extends React.Component {
         <ButtonComponent text="Reset Game" onClick={() => {this.resetGame()}}/>
         </div>
         
-        {this.state.newScore ? <NameFormComponent onNameSubmitted={(name) => {this.onNameSubmitted(name)}}/>:''}
+        {this.state.newScore ? <NameFormComponent onNameSubmitted={(name) => {this.onNameSubmitted(name, this.state.newScore)}}/>:''}
         <HighscoresComponent scores={this.state.scores} />
         <div className="controls">
         <ButtonComponent text="Reset Highscores" onClick={() => {this.resetHighscores()}}/>
