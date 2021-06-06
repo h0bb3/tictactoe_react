@@ -6,7 +6,6 @@ import {NameFormComponent} from '../nameform/nameform-component'
 import {BoardComponent} from '../board/board-component'
 import {Highscores} from '../../model/highscores'
 import { TicTacToe } from '../../model/tictactoe'
-import { doNegimaxMove } from '../../model/tictactoe-ai'
 
 
 function Status(props) {
@@ -29,12 +28,18 @@ export class Game extends React.Component {
     super(props)
     this.state = {
       status: "Game Not Started",
-      scores: new Highscores(),
+      scores: new Highscores(props.localStorage !== undefined ? props.localStorage : localStorage),
       game: new TicTacToe(3)
     }
 
+    this._aiWaitTime = 2000
+
     this.aiWorker = new AiWorkerWrapper()
     this.aiWorker.addEventListener('message', (event) => {this.onBoardClick(event.data.ix)});
+  }
+
+  get aiWaitTime() {
+    return this._aiWaitTime
   }
 
   onBoardClick(squareIx) {
@@ -47,17 +52,11 @@ export class Game extends React.Component {
       // so we need to check that the turn has gone from human to ai
       if (!this.state.game.checkWinner() && this.isAITurn() && oldTurn !== this.state.game.turn) {
         const game = this.state.game
-        
-        if (this.props.noAITimer) {
-          const move = doNegimaxMove(game)
-          game.doMove(move)
-          this.onGameUpdate(this.state.game)
-        } else {
-          // this simulates some thinking time that makes the experience better
-          setTimeout( () => {
-            this.aiWorker.postMessage({gameSquares: game.squares, turn: game.turn})
-          }, 2000)
-        }
+      
+        // this simulates some thinking time that makes the experience better
+        setTimeout( () => {
+          this.aiWorker.postMessage({gameSquares: game.squares, turn: game.turn})
+        }, this.aiWaitTime)
       }
     }
   }
@@ -72,9 +71,10 @@ export class Game extends React.Component {
     this.setState({game: tttGame, scores: this.state.scores, newScore: newScore})
   }
 
-  onNameSubmitted(name) {
-    this.state.scores.addScore(this.state.newScore, name)
-    this.setState({game: this.state.game, scores: this.state.scores, newScore: undefined})
+  onNameSubmitted(name, score) {
+    if (this.state.scores.addScore(score, name)) {
+      this.setState({game: this.state.game, scores: this.state.scores, newScore: undefined})
+    }
   }
   
   isAITurn() {
@@ -100,19 +100,33 @@ export class Game extends React.Component {
       status = `Winner is: ${winner} at Turn: ${game.turn}`
     }
 
-    const onClick = game.checkWinner() || this.isAITurn() || this.state.newScore ? undefined : (squareIx) => {this.onBoardClick(squareIx)}
+    const onClicks = []
+    const validMoves = game.getValidMoves();
+    for (let i = 0; i < game.size * game.size; i++) {
+      let validMove = false
+      if (!game.checkWinner() && !this.isAITurn()) {
+        for (let vmIx = 0; vmIx < validMoves.length; vmIx++) {
+          if ((validMoves[vmIx] !== undefined && validMoves[vmIx].from === i) || (validMoves[vmIx].from === undefined && validMoves[vmIx].to === i)) {
+            validMove = true
+            break
+          }
+        }
+      }
+      
+      onClicks.push(validMove ? (squareIx) => {this.onBoardClick(squareIx)} : undefined)
+    }
 
     return (
       <div className="game">
         <div className="game-info">
           <Status status={status}/>  
         </div>
-        <BoardComponent onClick={onClick} size={game.size} getSquareSymbol={(squareIx) => {return game.getSquareSymbol(squareIx)}}/>
+        <BoardComponent onClicks={onClicks} size={game.size} getSquareSymbol={(squareIx) => {return game.getSquareSymbol(squareIx)}}/>
         <div className="controls">
         <ButtonComponent text="Reset Game" onClick={() => {this.resetGame()}}/>
         </div>
         
-        {this.state.newScore ? <NameFormComponent onNameSubmitted={(name) => {this.onNameSubmitted(name)}}/>:''}
+        {this.state.newScore ? <NameFormComponent onNameSubmitted={(name) => {this.onNameSubmitted(name, this.state.newScore)}}/>:''}
         <HighscoresComponent scores={this.state.scores} />
         <div className="controls">
         <ButtonComponent text="Reset Highscores" onClick={() => {this.resetHighscores()}}/>

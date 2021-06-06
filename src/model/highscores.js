@@ -1,15 +1,25 @@
 
 export class Highscores {
   #_scores
+  #_storageAPI
 
-  constructor() {
-    this._scores = localStorage.getItem('scores') ? JSON.parse(localStorage.getItem('scores')) : [];
+  constructor(storageAPI) {
+    this._storageAPI = storageAPI
+    this._scores = this._storageAPI.getItem('scores') !== undefined ? JSON.parse(this._storageAPI.getItem('scores')) : [];
   }
 
   addScore(score, name) {
+    if (name === undefined || name.length <= 0) {
+      return false
+    }
+    if (!Number.isInteger(score) || score < 0) {
+      return false
+    }
     this._scores.push({score:score, name:name, time:Date()})
     this._scores.sort((a, b) => {return b.score - a.score})
     this._save()
+
+    return true
   }
 
   get scores() {
@@ -17,7 +27,7 @@ export class Highscores {
   }
 
   _save() {
-    localStorage.setItem('scores', JSON.stringify(this._scores))
+    this._storageAPI.setItem('scores', JSON.stringify(this._scores))
   }
 
   reset() {

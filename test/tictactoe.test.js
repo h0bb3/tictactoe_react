@@ -144,7 +144,7 @@ describe('TicTacToe', () => {
       const size = 3
       const middleSquare = Math.floor(size * size / 2)
       for (let square = 0; square < size * size; square++) {
-        if (square != middleSquare) {
+        if (square !== middleSquare) {
           const sut = new TicTacToe(size)
           expect(sut.doMove(square)).to.equal(true)
         }
@@ -155,7 +155,7 @@ describe('TicTacToe', () => {
       const size = 3
       const middleSquare = Math.floor(size * size / 2)
       for (let square = 0; square < size * size; square++) {
-        if (square != middleSquare) {
+        if (square !== middleSquare) {
           const sut = new TicTacToe(size)
           sut.doMove(square)
           expect(sut.getSquareSymbol(square)).to.equal(sut.getTurnSymbol(0))

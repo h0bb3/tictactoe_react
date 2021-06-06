@@ -1,4 +1,8 @@
 export class TicTacToe {
+  #_size
+  #_squares
+  #_turn
+  
   constructor(size) {
     if (size < 3 || size % 2 !== 1) {
       throw new Error(`The argument size: '${size}' is not valid for tic tac toe (3, 5, 7, ...)`) 

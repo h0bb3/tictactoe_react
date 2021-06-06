@@ -1,25 +1,38 @@
 import {mount} from "enzyme";
 import {Game} from '../game/game-component'
 
+class StorageMock {
+  constructor() {
+    this.values = {}
+  }
+
+  setItem(key, value) {
+    this.values[key] = value
+  }
+  getItem(key, value) {
+    return this.values[key]
+  }
+}
+
 describe('<Game/>', () => {
 
   it('renders some html', () => {
-    const wrapper = mount(<Game/>)
+    const wrapper = mount(<Game localStorage={new StorageMock()}/>)
     expect(wrapper.html().length).toBeGreaterThan(0)
   })
 
   it('includes one Board component', () => {
-    const wrapper = mount(<Game/>)
+    const wrapper = mount(<Game localStorage={new StorageMock()}/>)
     expect(wrapper.find('BoardComponent')).toHaveLength(1)
   })
 
   it('includes one Highscores component', () => {
-    const wrapper = mount(<Game/>)
+    const wrapper = mount(<Game localStorage={new StorageMock()}/>)
     expect(wrapper.find('HighscoresComponent')).toHaveLength(1)
   })
 
   it ('should accept click events from the board squares and set the corresponding game square', () => {
-    const wrapper = mount(<Game/>)
+    const wrapper = mount(<Game localStorage={new StorageMock()}/>)
     const board = wrapper.find('BoardComponent')
     const buttons = board.find('button')
     const game = wrapper.state().game
@@ -29,27 +42,61 @@ describe('<Game/>', () => {
   })
 
   it ('should let the ai play as the second player', () => {
-    const wrapper = mount(<Game noAITimer={true}/>)
-    const board = wrapper.find('BoardComponent')
-    const buttons = board.find('button')
-    const game = wrapper.state().game
-
-    buttons.at(8).simulate('click') // human move
-    
-    expect(game.countPlayerSymbols(game.getTurnSymbol(1))).toEqual(1)
-  })
-
-  it ('has an ai that does not crash', () => {
-    const wrapper = mount(<Game/>)
+    const wrapper = mount(<Game localStorage={new StorageMock()}/>)
     const board = wrapper.find('BoardComponent')
     const buttons = board.find('button')
     const game = wrapper.state().game
 
     jest.useFakeTimers()
     buttons.at(8).simulate('click') // human move
-    jest.advanceTimersByTime(2000)
+    jest.advanceTimersByTime(wrapper.aiWaitTime)
     
-    //expect(game.countPlayerSymbols(game.getTurnSymbol(1))).toEqual(1)
+    expect(game.countPlayerSymbols(game.getTurnSymbol(1))).toEqual(1)
+  })
+
+  it ('has an ai that does not crash', () => {
+    const wrapper = mount(<Game localStorage={new StorageMock()}/>)
+    const board = wrapper.find('BoardComponent')
+    const buttons = board.find('button')
+    const game = wrapper.state().game
+
+    jest.useFakeTimers()
+    buttons.at(8).simulate('click') // human move
+    jest.advanceTimersByTime(wrapper.aiWaitTime)
+    
+    expect(game.countPlayerSymbols(game.getTurnSymbol(1))).toEqual(1)
+  })
+
+  describe('onNameSubmitted', () => {
+    it('should add a name to the highscore state and sets the newScore state to undefined', () => {
+      const wrapper = mount(<Game localStorage={new StorageMock()}/>)
+      wrapper.instance().onNameSubmitted('a', 17)
+      expect(wrapper.state().scores.scores.length).toEqual(1)
+      expect(wrapper.state().newScore).toBeUndefined()
+    })
+
+    it('should not change newScore state if the name or score are not accepted', () => {
+      const wrapper = mount(<Game localStorage={new StorageMock()}/>)
+      wrapper.state().newScore = 17
+      wrapper.instance().onNameSubmitted('', 17)
+      expect(wrapper.state().scores.scores.length).toEqual(0)
+      expect(wrapper.state().newScore).toEqual(17)
+    })
+
+    it ('should be called when the name form is submitted', () => {
+      const wrapper = mount(<Game localStorage={new StorageMock()}/>)
+      const game = wrapper.instance()
+      const state = wrapper.state()
+      state.newScore = 17
+      wrapper.setState(state)
+
+      jest.spyOn(game, 'onNameSubmitted')
+
+      const nameForm = wrapper.find('NameFormComponent').find('form')
+      nameForm.simulate('submit')
+
+      expect(game.onNameSubmitted).toBeCalled()
+    })
   })
 
 })
