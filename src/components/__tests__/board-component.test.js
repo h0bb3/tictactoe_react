@@ -8,28 +8,29 @@ function getSquareSymbol(squareIx) {
 describe('<BoardComponent>', () => {
 
   it ('renders some html', () => {
-    const wrapper = shallow(<BoardComponent size={3} getSquareSymbol={getSquareSymbol}/>)
+    const wrapper = shallow(<BoardComponent size={3} getSquareSymbol={getSquareSymbol} onClicks={[]}/>)
     expect(wrapper.html().length).toBeGreaterThan(1)
   })
 
 
   it ('renders size x size squares', () => {
     const size = 6
-    const wrapper = mount(<BoardComponent size={size} getSquareSymbol={getSquareSymbol}/>)
+    const wrapper = mount(<BoardComponent size={size} getSquareSymbol={getSquareSymbol} onClicks={[]}/>)
     expect(wrapper.find('Zquare')).toHaveLength(size * size)
   })
 
   it ('renders size rows', () => {
     const size = 5
-    const wrapper = mount(<BoardComponent size={size} getSquareSymbol={getSquareSymbol}/>)
+    const wrapper = mount(<BoardComponent size={size} getSquareSymbol={getSquareSymbol} onClicks={[]}/>)
     expect(wrapper.find('.board-row')).toHaveLength(size)
   })
 
   it ('accepts onClick events and forwards the square index', () => {
-    const size = 3
+    const size = 1
     let actualIndex = -1
+    const clickFunctions = [(ix) => {actualIndex = ix}]
 
-    const wrapper = mount(<BoardComponent size={size} getSquareSymbol={getSquareSymbol} onClick={(ix) => {actualIndex = ix}}/>)
+    const wrapper = mount(<BoardComponent size={size} getSquareSymbol={getSquareSymbol} onClicks={clickFunctions}/>)
     const buttons = wrapper.find('button')
     for (let i = 0; i  < size * size; i++) {
       actualIndex = -1
@@ -41,7 +42,7 @@ describe('<BoardComponent>', () => {
   it ('shows the correct symbol on each square', () => {
     const size = 3
 
-    const wrapper = mount(<BoardComponent size={size} getSquareSymbol={getSquareSymbol} />)
+    const wrapper = mount(<BoardComponent size={size} getSquareSymbol={getSquareSymbol} onClicks={[]}/>)
     const buttons = wrapper.find('button')
     for (let i = 0; i  < size * size; i++) {
       expect(buttons.at(i).text()).toEqual(getSquareSymbol(i))

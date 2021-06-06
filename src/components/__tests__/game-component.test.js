@@ -68,19 +68,34 @@ describe('<Game/>', () => {
   })
 
   describe('onNameSubmitted', () => {
-    it('adds a name to the highscore state and sets the newScore state to undefined', () => {
+    it('should add a name to the highscore state and sets the newScore state to undefined', () => {
       const wrapper = mount(<Game localStorage={new StorageMock()}/>)
       wrapper.instance().onNameSubmitted('a', 17)
       expect(wrapper.state().scores.scores.length).toEqual(1)
       expect(wrapper.state().newScore).toBeUndefined()
     })
 
-    it('only changes newScore state if the name and score is accepted', () => {
+    it('should not change newScore state if the name or score are not accepted', () => {
       const wrapper = mount(<Game localStorage={new StorageMock()}/>)
       wrapper.state().newScore = 17
       wrapper.instance().onNameSubmitted('', 17)
       expect(wrapper.state().scores.scores.length).toEqual(0)
       expect(wrapper.state().newScore).toEqual(17)
+    })
+
+    it ('should be called when the name form is submitted', () => {
+      const wrapper = mount(<Game localStorage={new StorageMock()}/>)
+      const game = wrapper.instance()
+      const state = wrapper.state()
+      state.newScore = 17
+      wrapper.setState(state)
+
+      jest.spyOn(game, 'onNameSubmitted')
+
+      const nameForm = wrapper.find('NameFormComponent').find('form')
+      nameForm.simulate('submit')
+
+      expect(game.onNameSubmitted).toBeCalled()
     })
   })
 

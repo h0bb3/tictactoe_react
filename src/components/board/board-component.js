@@ -1,51 +1,49 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './board-component.css'
 
-class Zquare extends React.Component {
-  
-  render() {
-    return (
-      <button className="square" onClick={() => this.props.onClick()}>
-        {this.props.value}
-      </button>
-    )
-  }
+const Zquare = props => {
+
+  const [ fade, setFade ] = useState(false);
+
+  const mouseOverStyle = fade && props.onClick !== undefined ? {backgroundColor:'#ddd', opacity: 1, transition: 'all .2s ease-in-out',} : {opacity: 1, transition: 'all .2s ease-in-out',}
+
+  return (
+    <button style={mouseOverStyle} className="square"
+      onClick={props.onClick !== undefined ? () => props.onClick(props.squareIx) : undefined}
+      onMouseEnter =  {() => setFade(true)}
+      onMouseLeave =  {() => setFade(false)}
+    >
+      {props.value}
+    </button>
+  )
 }
 
 export class BoardComponent extends React.Component {
-  renderSquare(i, doNada) {
+  renderSquare(i) {
     return <Zquare value={this.props.getSquareSymbol(i)}
-             onClick={()=> doNada ? this.doNada() : this.handleClick(i)}
-             key={i}/>
-  }
-
-  doNada() {
-
+             onClick={this.props.onClicks[i]}
+             key={i}
+             squareIx={i}/>
   }
   
-  handleClick(i) {
-    this.props.onClick(i)
-  }
-  
-  renderRow(start, length, doNada) {
+  renderRow(start, length) {
     const range = [...Array(length).keys()]
     return (
        <div className="board-row" key={start}>
-         { range.map((i) => this.renderSquare(start + i, doNada))}
+         { range.map((i) => this.renderSquare(start + i))}
        </div>
     )
   }
 
   render() {
     
-    const doNada = !this.props.onClick
     const size = this.props.size
 
     const range = [...Array(size).keys()]
     return (
       <div className="game-board">
       <div>
-          { range.map((i) => this.renderRow(i * size, size, doNada)) }
+          { range.map((i) => this.renderRow(i * size, size)) }
       </div>
       </div>
     )
