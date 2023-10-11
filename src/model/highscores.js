@@ -23,7 +23,7 @@ export class Highscores {
   }
 
   get scores() {
-    return [...this._scores]
+    return Array.from(this._scores)
   }
 
   _save() {
